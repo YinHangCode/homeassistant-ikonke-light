@@ -22,12 +22,12 @@ def setup_platform(hass, config, add_devices_callback, discovery_info=None):
     ikonkeIO = config.get("ikonkeIO")
     deviceCfgs = config.get("deviceCfgs")
     for deviceCfg in deviceCfgs:
-            type = deviceCfg.get("type")
-            if type == "klight":
-                addDeviceArr.append(\
-                    KLight("klight_" + deviceCfg.get("mac").replace('-',''), ikonkeIO, deviceCfg.get("type"), deviceCfg.get("ip"), deviceCfg.get("mac"), deviceCfg.get("password")))
-            else:
-                print("[IkonkeLightPlatform][ERROR]error type" + type)
+        type = deviceCfg.get("type")
+        if type == "klight":
+            addDeviceArr.append(\
+                KLight("klight_" + deviceCfg.get("mac").replace('-',''), ikonkeIO, deviceCfg.get("type"), deviceCfg.get("ip"), deviceCfg.get("mac"), deviceCfg.get("password")))
+        else:
+            print("[IkonkeLightPlatform][ERROR]error type" + type)
     
     add_devices_callback(addDeviceArr)
 
@@ -82,7 +82,7 @@ class KLight(Light):
         return SUPPORT_BRIGHTNESS | SUPPORT_RGB_COLOR
     
     def update(self):
-        command = 'sh ' + self.ikonkeIO + ' -C ' + self.type + ' ' + self.ip + ' ' + self.mac + ' ' + self.passwd + ' getRelay'
+        command = 'sh "{ikonkeio}" -C "{type}" "{ip}" "{mac}" "{password}" getRelay'.format(ikonkeio=self.ikonkeIO, type=self.type, ip=self.ip, mac=self.mac, password=self.passwd)
         result = os.popen(command).read().strip('\n')
         if result == 'open':
             self._state = True
@@ -93,16 +93,16 @@ class KLight(Light):
         else:
             self._available = False
         
-        command = 'sh ' + self.ikonkeIO + ' -C ' + self.type + ' ' + self.ip + ' ' + self.mac + ' ' + self.passwd + ' getBrightness'
-        result = os.popen(command).read().strip('\n')
+        command2 = 'sh "{ikonkeio}" -C "{type}" "{ip}" "{mac}" "{password}" getBrightness'.format(ikonkeio=self.ikonkeIO, type=self.type, ip=self.ip, mac=self.mac, password=self.passwd)
+        result = os.popen(command2).read().strip('\n')
         if result == 'fail':
             self._available = False
         else:
             self._brightness = int(255 * int(result) / 100)
             self._available = True
         
-        command = 'sh ' + self.ikonkeIO + ' -C ' + self.type + ' ' + self.ip + ' ' + self.mac + ' ' + self.passwd + ' getRGB'
-        result = os.popen(command).read().strip('\n')
+        command3 = 'sh "{ikonkeio}" -C "{type}" "{ip}" "{mac}" "{password}" getRGB'.format(ikonkeio=self.ikonkeIO, type=self.type, ip=self.ip, mac=self.mac, password=self.passwd)
+        result = os.popen(command3).read().strip('\n')
         if result == 'fail':
             self._available = False
         else:
@@ -111,7 +111,7 @@ class KLight(Light):
     
     def turn_on(self, **kwargs):
         if self._state == False:
-            command = 'sh ' + self.ikonkeIO + ' -C ' + self.type + ' ' + self.ip + ' ' + self.mac + ' ' + self.passwd + ' setRelay open'
+            command = 'sh "{ikonkeio}" -C "{type}" "{ip}" "{mac}" "{password}" setRelay open'.format(ikonkeio=self.ikonkeIO, type=self.type, ip=self.ip, mac=self.mac, password=self.passwd)
             # print(command)
             result = os.popen(command).read().strip('\n')
             if result == 'success':
@@ -120,7 +120,7 @@ class KLight(Light):
                 pass
         
         if ATTR_RGB_COLOR in kwargs:
-            command2 = 'sh ' + self.ikonkeIO + ' -C ' + self.type + ' ' + self.ip + ' ' + self.mac + ' ' + self.passwd + ' setRGB ' + ','.join(str(i) for i in kwargs[ATTR_RGB_COLOR])
+            command2 = 'sh "{ikonkeio}" -C "{type}" "{ip}" "{mac}" "{password}" setRGB "{rgb}"'.format(ikonkeio=self.ikonkeIO, type=self.type, ip=self.ip, mac=self.mac, password=self.passwd, rgb=','.join(str(i) for i in kwargs[ATTR_RGB_COLOR]))
             # print(command2)
             result = os.popen(command2).read().strip('\n')
             if result == 'success':
@@ -129,7 +129,7 @@ class KLight(Light):
                 pass
         
         if ATTR_BRIGHTNESS in kwargs:
-            command3 = 'sh ' + self.ikonkeIO + ' -C ' + self.type + ' ' + self.ip + ' ' + self.mac + ' ' + self.passwd + ' setBrightness ' + str(int(100 * kwargs[ATTR_BRIGHTNESS] / 255))
+            command3 = 'sh "{ikonkeio}" -C "{type}" "{ip}" "{mac}" "{password}" setBrightness "{brightness}"'.format(ikonkeio=self.ikonkeIO, type=self.type, ip=self.ip, mac=self.mac, password=self.passwd, brightness=str(int(100 * kwargs[ATTR_BRIGHTNESS] / 255)))
             # print(command3)
             result = os.popen(command3).read().strip('\n')
             if result == 'success':
@@ -140,7 +140,7 @@ class KLight(Light):
         self.schedule_update_ha_state()
     
     def turn_off(self, **kwargs):
-        command = 'sh ' + self.ikonkeIO + ' -C ' + self.type + ' ' + self.ip + ' ' + self.mac + ' ' + self.passwd + ' setRelay close'
+        command = 'sh "{ikonkeio}" -C "{type}" "{ip}" "{mac}" "{password}" setRelay close'.format(ikonkeio=self.ikonkeIO, type=self.type, ip=self.ip, mac=self.mac, password=self.passwd)
         result = os.popen(command).read().strip('\n')
         if result == 'success':
             self._state = False
