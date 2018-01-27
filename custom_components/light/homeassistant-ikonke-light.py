@@ -6,16 +6,18 @@ from homeassistant.components.light import (
     SUPPORT_COLOR_TEMP, SUPPORT_EFFECT, SUPPORT_RGB_COLOR, SUPPORT_WHITE_VALUE,
     Light)
 
-platformVersion = "0.0.1"
+platformVersion = "0.0.2"
 
 # pylint: disable=unused-argument
 def setup_platform(hass, config, add_devices_callback, discovery_info=None):
-    print("[IkonkeLightPlatform][INFO]********************************************************************")
-    print("[IkonkeLightPlatform][INFO]                IkonkeLightPlatform v%s By YinHang"%(platformVersion))
-    print("[IkonkeLightPlatform][INFO]  GitHub: https://github.com/YinHangCode/homeassistant_ikonke_light ")
-    print("[IkonkeLightPlatform][INFO]                                                QQ Group: 107927710 ")
-    print("[IkonkeLightPlatform][INFO]********************************************************************")
-    print("[IkonkeLightPlatform][INFO]start success...")
+    print(\
+        "[IkonkeLightPlatform][INFO]*******************************************************************\r\n"\
+        "[IkonkeLightPlatform][INFO]               IkonkeLightPlatform v%s By YinHang \r\n"\
+        "[IkonkeLightPlatform][INFO] GitHub: https://github.com/YinHangCode/homeassistant-ikonke-light \r\n"\
+        "[IkonkeLightPlatform][INFO]                                               QQ Group: 107927710 \r\n"\
+        "[IkonkeLightPlatform][INFO]*******************************************************************\r\n"\
+        "[IkonkeLightPlatform][INFO]start success...\r\n"\
+    %(platformVersion))
     
     addDeviceArr = []
     
